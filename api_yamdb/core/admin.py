@@ -1,4 +1,4 @@
-from django.contrib import admin
+'''from django.contrib import admin
 
 from .models import *
 from reviews.models import *
@@ -59,4 +59,4 @@ admin.site.register(Genre, GenreAdmin)
 admin.site.register(Title, TitleAdmin)
 admin.site.register(GenriesOfTitle, GenriesOfTitleAdmin)
 admin.site.register(Review, ReviewAdmin)
-admin.site.register(Comments, CommentsAdmin)
+admin.site.register(Comments, CommentsAdmin)'''

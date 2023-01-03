@@ -22,7 +22,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+    'authentication',
     'reviews',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -106,4 +108,9 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 
 # переопределим пользовательскую модель
 
-AUTH_USER_MODEL = 'core.User'
+AUTH_USER_MODEL = 'authentication.User'
+
+#  подключаем движок filebased.EmailBackend
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# указываем директорию, в которую будут складываться файлы писем
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails') 
