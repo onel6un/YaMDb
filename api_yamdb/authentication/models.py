@@ -5,6 +5,7 @@ from random import randrange
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import RefreshToken
 
+
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
@@ -26,7 +27,7 @@ class UserManagerCustom(UserManager):
         # сгенирируем подтверждающий код
         confirm_code = self.set_confirm_code()
 
-        user = self.model(username=username, email=email)
+        user = self.model(username=username, email=self.normalize_email(email))
         user.set_password(password)
         user.confirm_code = confirm_code
         user.save()
@@ -73,7 +74,4 @@ class User(AbstractUser):
         '''Генерирует JWT токен'''
         refresh = RefreshToken.for_user(self)
 
-        return {
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        }
+        return str(refresh.access_token)
