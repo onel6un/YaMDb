@@ -26,6 +26,13 @@ class Review(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE
     )
+    title = models.ForeignKey(
+        'Title',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name='reviews'
+    )
     score = models.IntegerField()
     pub_date = models.DateTimeField(auto_now_add=True)
 
@@ -36,6 +43,7 @@ class Review(models.Model):
 class Title(models.Model):
     '''Модель произведения(фильм, книга, песня и т.д.).'''
     name = models.CharField(max_length=255)
+    description = models.CharField(max_length=500, blank=True)
     year = models.IntegerField()
     category = models.ForeignKey(
         'Category',
