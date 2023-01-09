@@ -2,6 +2,7 @@ from django.shortcuts import render
 
 from rest_framework import viewsets
 from rest_framework import filters
+from rest_framework import mixins
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -11,7 +12,8 @@ from core.pagination import APIPagination
 from core import filter_sets
 
 
-class CategoriesAPI(viewsets.ModelViewSet):
+class CategoriesAPI(viewsets.GenericViewSet, mixins.ListModelMixin,
+                mixins.CreateModelMixin, mixins.DestroyModelMixin):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     filter_backends = (filters.SearchFilter,)
@@ -19,7 +21,8 @@ class CategoriesAPI(viewsets.ModelViewSet):
     pagination_class = APIPagination
 
 
-class GenriesAPI(viewsets.ModelViewSet):
+class GenriesAPI(viewsets.GenericViewSet, mixins.ListModelMixin,
+                mixins.CreateModelMixin, mixins.DestroyModelMixin):
     queryset = Genre.objects.all()
     serializer_class = GenresSerializer
     filter_backends = (filters.SearchFilter,)
