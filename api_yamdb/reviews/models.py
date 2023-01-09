@@ -29,8 +29,6 @@ class Review(models.Model):
     title = models.ForeignKey(
         'Title',
         on_delete=models.CASCADE,
-        blank=True,
-        null=True,
         related_name='reviews'
     )
     score = models.IntegerField()

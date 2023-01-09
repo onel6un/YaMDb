@@ -109,3 +109,5 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 # переопределим пользовательскую модель
 
 AUTH_USER_MODEL = 'core.User'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
