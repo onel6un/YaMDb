@@ -1,6 +1,3 @@
-import jwt
-
-from datetime import timedelta, datetime
 from random import randrange
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -14,7 +11,7 @@ from django.contrib.auth.models import AbstractUser, UserManager
 class UserManagerCustom(UserManager):
     ''' Кастомный менеджр посльзователей'''
     
-    def create_user(self, username, email, password):
+    def create_user(self, username, email, password, *args, **kwargs):
         if username is None:
             return TypeError('Пользователь должен иметь username')
         
@@ -27,7 +24,7 @@ class UserManagerCustom(UserManager):
         # сгенирируем подтверждающий код
         confirm_code = self.set_confirm_code()
 
-        user = self.model(username=username, email=self.normalize_email(email))
+        user = self.model(username=username, email=self.normalize_email(email), *args, **kwargs)
         user.set_password(password)
         user.confirm_code = confirm_code
         user.save()
@@ -51,11 +48,23 @@ class UserManagerCustom(UserManager):
         )
 
 
+CHOICES = (
+        ('user', 'пользователь'),
+        ('admin', 'админ'),
+        ('moderator', 'модератор'),
+    )
+
+
 class User(AbstractUser):
     'Переопределили модель пользователя'
-    is_confirm= models.BooleanField(default=False)
-    is_moderator = models.BooleanField(blank=True, default=False)
-    is_admin = models.BooleanField(blank=True, default=False)
+    email = models.EmailField(unique=True)
+    role = models.CharField(
+        max_length=16,
+        choices=CHOICES,
+        default='user'
+    )
+    bio = models.TextField(max_length=1200, blank=True)
+    is_confirm = models.BooleanField(default=False)
     confirm_code = models.IntegerField(blank=True, null=True)
  
 
