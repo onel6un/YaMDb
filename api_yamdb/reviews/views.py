@@ -1,23 +1,38 @@
 from django.shortcuts import render
 
 from rest_framework import viewsets
+from rest_framework import filters
+
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import *
 from .serializers import *
+from core.pagination import APIPagination
+from core import filter_sets
 
 
 class CategoriesAPI(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',) 
+    pagination_class = APIPagination
 
 
 class GenriesAPI(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenresSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',) 
+    pagination_class = APIPagination
 
 
 class TitlesAPI(viewsets.ModelViewSet):
     queryset = Title.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = filter_sets.TitlesFilterSet
+    #filterset_fields = ('name', 'year', 'category__slug')
+    pagination_class = APIPagination
 
     # использование двух сериализаторов диктуеться ТЗ,
     # для записи поля genre и category используеться slugRelatedField
@@ -29,6 +44,7 @@ class TitlesAPI(viewsets.ModelViewSet):
         if self.action == 'list' or self.action == 'retieve':
             return TitlesSerializerForRead
         return TitlesSerializerForCreate
+
 
 
 class ReviewsAPI(viewsets.ModelViewSet):
