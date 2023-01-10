@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.db.models import Avg
 
 from .models import *
-from core.models import User
+from authentication.models import User
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -23,11 +23,12 @@ class TitlesSerializerForCreate(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         slug_field='name',
         queryset=Genre.objects.all(),
-        many=True
+        many=True,
+        required = False
     )
     category = serializers.SlugRelatedField(
         slug_field='name',
-        queryset=Category.objects.all()
+        queryset=Category.objects.all(),
     )
 
     class Meta:
