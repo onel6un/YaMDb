@@ -3,9 +3,12 @@ from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework import mixins
+from rest_framework import filters
 
 from .serializer import *
+
+from core.permissions import AdminOnly
+from core.pagination import APIPagination
 
 
 class RegistrationAPI(APIView):
@@ -33,8 +36,11 @@ class GetTokenAPI(APIView):
 class UsersAPI(viewsets.ModelViewSet):
     serializer_class = UsersSerializer
     queryset = User.objects.all()
-    permission_classes = (AllowAny,) # заменить позже!
     lookup_field = 'username'
+    permission_classes = (AdminOnly,)
+    pagination_class = APIPagination
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('username',) 
 
 
 class UserSelfAPI(APIView):

@@ -8,12 +8,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import *
 from .serializers import *
-from core.pagination import APIPagination
 from core import filter_sets
+from core.pagination import APIPagination
+from core.permissions import *
 
 
 class CategoriesAPI(viewsets.GenericViewSet, mixins.ListModelMixin,
                 mixins.CreateModelMixin, mixins.DestroyModelMixin):
+    permission_classes = (AdminOrReadOnly,)
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     filter_backends = (filters.SearchFilter,)
@@ -23,6 +25,7 @@ class CategoriesAPI(viewsets.GenericViewSet, mixins.ListModelMixin,
 
 class GenriesAPI(viewsets.GenericViewSet, mixins.ListModelMixin,
                 mixins.CreateModelMixin, mixins.DestroyModelMixin):
+    permission_classes = (AdminOrReadOnly,)
     queryset = Genre.objects.all()
     serializer_class = GenresSerializer
     filter_backends = (filters.SearchFilter,)
@@ -31,6 +34,7 @@ class GenriesAPI(viewsets.GenericViewSet, mixins.ListModelMixin,
 
 
 class TitlesAPI(viewsets.ModelViewSet):
+    permission_classes = (AdminOrReadOnly,)
     queryset = Title.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = filter_sets.TitlesFilterSet
@@ -52,12 +56,21 @@ class TitlesAPI(viewsets.ModelViewSet):
 
 class ReviewsAPI(viewsets.ModelViewSet):
     serializer_class = ReviewsSerializer
+    pagination_class = APIPagination
+    permission_classes = (AuthorOrModeratorOtherwiseReadOnly,)
+
+    def get_permissions(self):
+        # Если в GET-запросе требуется получить информацию об объекте или лист
+        if self.action in ('retrieve', 'list'):
+            # Вернем обновленный перечень используемых пермишенов
+            return (ReadOnly(),)
+        # Для остальных ситуаций оставим текущий перечень пермишенов без изменений
+        return super().get_permissions()
 
     def get_queryset(self):
         title_id = self.kwargs.get('titles_id')
         queryset = Review.objects.filter(title=title_id)
         return queryset
-    
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('titles_id')
@@ -70,6 +83,15 @@ class ReviewsAPI(viewsets.ModelViewSet):
 
 class CommentsAPI(viewsets.ModelViewSet):
     serializer_class = CommentsSerializer
+    permission_classes = (AuthorOrModeratorOtherwiseReadOnly,)
+
+    def get_permissions(self):
+        # Если в GET-запросе требуется получить информацию об объекте или лист
+        if self.action in ('retrieve', 'list'):
+            # Вернем обновленный перечень используемых пермишенов
+            return (ReadOnly(),)
+        # Для остальных ситуаций оставим текущий перечень пермишенов без изменений
+        return super().get_permissions()
 
     def get_queryset(self):
         review_id = self.kwargs.get('review_id')
