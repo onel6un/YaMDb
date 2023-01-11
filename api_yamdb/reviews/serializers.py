@@ -1,8 +1,12 @@
+import datetime as dt
+
 from rest_framework import serializers
 from django.db.models import Avg
 
 from .models import *
 from authentication.models import User
+
+
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -32,6 +36,12 @@ class TitlesSerializerForCreate(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = ('id', 'name', 'year', 'description', 'genre', 'category')
+
+    def validate_year(self, value):
+        year_now = dt.date.today().year
+        if value > year_now:
+            raise serializers.ValidationError('Проверьте год произведения!')
+        return value
 
 
 class TitlesSerializerForRead(serializers.ModelSerializer):
@@ -66,6 +76,18 @@ class ReviewsSerializer(serializers.ModelSerializer):
         model = Review
         fields = ('id', 'text', 'author', 'score', 'pub_date', 'title')
         read_only_fields = ('id', 'author', 'pub_date', 'title')
+
+    def validate(self, data):
+        user = self.context.get("request").user
+        title_id = self.context['view'].kwargs['titles_id']
+        # Проверим есть ли у пользователя отзыв на данное произведение
+        # если истина, выведем исключение
+        users_reviews = Review.objects.filter(author=user)
+        if users_reviews.filter(title_id=title_id).exists():
+            raise serializers.ValidationError(
+                'Вы можите написать только один отзыв, на данное произведение'
+            )
+        return data
 
 
 class CommentsSerializer(serializers.ModelSerializer):

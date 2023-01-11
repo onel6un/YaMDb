@@ -17,6 +17,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username', 'password', 'email')
 
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError('Данное имя недоступно!')
+        return value
+
     def validate(self, data):
         if data.get('email') is None:
             raise serializers.ValidationError('email is required field')
