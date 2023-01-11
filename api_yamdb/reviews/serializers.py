@@ -6,14 +6,12 @@ from authentication.models import User
 
 
 class CategorySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Category
         fields = ('name', 'slug')
 
 
 class GenresSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = Genre
         fields = ('name', 'slug')
@@ -24,7 +22,7 @@ class TitlesSerializerForCreate(serializers.ModelSerializer):
         slug_field='name',
         queryset=Genre.objects.all(),
         many=True,
-        required = False
+        required=False
     )
     category = serializers.SlugRelatedField(
         slug_field='name',
@@ -43,13 +41,14 @@ class TitlesSerializerForRead(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = ('id', 'name', 'year', 'rating', 'description', 'genre', 'category')
+        fields = ('id', 'name', 'year', 'rating', 'description',
+                  'genre', 'category')
         read_only_fields = ('id', 'rating')
 
     def get_rating(self, obj):
         title = Title.objects.get(id=obj.id)
         # обратимся через related_name модели Title
-        # к связонной с ней моделью Review и вызвоем агрегирующую функцию 
+        # к связонной с ней моделью Review и вызвоем агрегирующую функцию
         # c параметром вычесления среднего арефметического
         awg_score_on_title = title.reviews.aggregate(Avg('score'))
         return awg_score_on_title.get('score__avg')

@@ -14,7 +14,7 @@ from core.permissions import *
 
 
 class CategoriesAPI(viewsets.GenericViewSet, mixins.ListModelMixin,
-                mixins.CreateModelMixin, mixins.DestroyModelMixin):
+                    mixins.CreateModelMixin, mixins.DestroyModelMixin):
     permission_classes = (AdminOrReadOnly,)
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -24,7 +24,7 @@ class CategoriesAPI(viewsets.GenericViewSet, mixins.ListModelMixin,
 
 
 class GenriesAPI(viewsets.GenericViewSet, mixins.ListModelMixin,
-                mixins.CreateModelMixin, mixins.DestroyModelMixin):
+                 mixins.CreateModelMixin, mixins.DestroyModelMixin):
     permission_classes = (AdminOrReadOnly,)
     queryset = Genre.objects.all()
     serializer_class = GenresSerializer
@@ -38,7 +38,7 @@ class TitlesAPI(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filterset_class = filter_sets.TitlesFilterSet
-    #filterset_fields = ('name', 'year', 'category__slug')
+    # filterset_fields = ('name', 'year', 'category__slug')
     pagination_class = APIPagination
 
     # использование двух сериализаторов диктуеться ТЗ,
@@ -51,7 +51,6 @@ class TitlesAPI(viewsets.ModelViewSet):
         if self.action == 'list' or self.action == 'retieve':
             return TitlesSerializerForRead
         return TitlesSerializerForCreate
-
 
 
 class ReviewsAPI(viewsets.ModelViewSet):

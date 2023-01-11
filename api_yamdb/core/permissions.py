@@ -20,7 +20,7 @@ class AdminOrReadOnly(permissions.BasePermission):
             return False
         if request.user.role == 'admin':
             return True
-        if request.user.is_superuser == True:
+        if request.user.is_superuser is True:
             return True
         return False
 
@@ -30,13 +30,12 @@ class AdminOrReadOnly(permissions.BasePermission):
         '''Условия разрешения на выполнение запроса для получения,
         изменения или удаления конкретного объекта'''
         return (request.user.role == 'admin'
-                    or request.user.is_superuser == True)
+                or request.user.is_superuser is True)
 
 
 class AuthorOrModeratorOtherwiseReadOnly(permissions.BasePermission):
     '''Право на изменение\удаление экземпляра, есть у
-        admin, moderator, superuser и автора экземпляра'''
-    
+        admin, moderator, superuser и автора экземпляра'''   
     # Право на чтение для не аутентифицированных
     # пользователей стоит указать отдельно во вьюсете!
 
@@ -47,7 +46,7 @@ class AuthorOrModeratorOtherwiseReadOnly(permissions.BasePermission):
             return True
         if request.user.role in ('admin', 'moderator'):
             return True
-        if request.user.is_superuser == True:
+        if request.user.is_superuser is True:
             return True
         return False
 
@@ -59,6 +58,6 @@ class AdminOnly(permissions.BasePermission):
             return False
         if request.user.role == 'admin':
             return True
-        if request.user.is_superuser == True:
+        if request.user.is_superuser is True:
             return True
         return False

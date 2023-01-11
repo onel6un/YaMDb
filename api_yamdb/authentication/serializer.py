@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate
 
 from authentication.models import User
 
+
 class RegistrationSerializer(serializers.ModelSerializer):
     '''Сериализатор регистрации нового не подтвержденного пользователя'''
     password = serializers.CharField(
@@ -11,6 +12,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         min_length=8,
         write_only=True
     )
+
     class Meta:
         model = User
         fields = ('username', 'password', 'email')
@@ -34,7 +36,7 @@ class GetTokenSerializer(serializers.Serializer):
     def validate(self, data):
         username = data.get('username')
         password = data.get('password')
-        
+
         user = authenticate(username=username, password=password)
 
         if user is None:
@@ -45,7 +47,7 @@ class GetTokenSerializer(serializers.Serializer):
                 'This user has been deactivated.'
             )
 
-        if user.is_confirm == False:
+        if user.is_confirm is False:
             if user.confirm_code == data.get('confirm_code'):
                 user.is_confirm = True
                 user.save()
@@ -53,7 +55,7 @@ class GetTokenSerializer(serializers.Serializer):
                     "token": user.token
                 }
             raise serializers.ValidationError('Invalid confirmation code')
-        
+
         return {
             "token": user.token
         }
@@ -68,9 +70,11 @@ class UsersSerializer(serializers.ModelSerializer):
     is_confirm = serializers.BooleanField(
         default=True
     )
+
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'first_name', 'last_name', 'bio', 'role', 'is_confirm')
+        fields = ('username', 'email', 'password', 'first_name', 'last_name',
+                  'bio', 'role', 'is_confirm')
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)

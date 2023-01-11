@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 
+
 class Category(models.Model):
     '''Модель категорий.'''
     name = models.CharField(max_length=255)
@@ -56,7 +57,7 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
-        
+
 
 class GenriesOfTitle(models.Model):
     '''Вспомогательная модель для жанров произведения.'''

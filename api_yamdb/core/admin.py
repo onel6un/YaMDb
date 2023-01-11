@@ -17,6 +17,7 @@ class GenreInline(admin.TabularInline):
     extra = 1
     raw_id_fields = ('genre', )
 
+
 class TitleAdmin(admin.ModelAdmin):
     inlines = (
        GenreInline,
@@ -30,7 +31,6 @@ class GenriesOfTitleAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'genre')
     search_fields = ('id', 'title', 'genre')
     list_filter = ('id', 'title', 'genre')
-    
 
 
 class ReviewAdmin(admin.ModelAdmin):

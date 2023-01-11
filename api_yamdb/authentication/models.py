@@ -4,27 +4,28 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 from django.db import models
-from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
 
 
 class UserManagerCustom(UserManager):
     ''' Кастомный менеджр посльзователей'''
-    
+
     def create_user(self, username, email, password, *args, **kwargs):
         if username is None:
             return TypeError('Пользователь должен иметь username')
-        
         if email is None:
             return TypeError('Пользователь должен иметь email')
-        
         if password is None:
             return TypeError('Пользователь должен иметь пароль')
 
         # сгенирируем подтверждающий код
         confirm_code = self.set_confirm_code()
 
-        user = self.model(username=username, email=self.normalize_email(email), *args, **kwargs)
+        user = self.model(
+            username=username,
+            email=self.normalize_email(email),
+            *args, **kwargs
+        )
         user.set_password(password)
         user.confirm_code = confirm_code
         user.save()
@@ -34,10 +35,9 @@ class UserManagerCustom(UserManager):
 
         return user
 
-
     def set_confirm_code(self):
         return randrange(100000, 999999)
-    
+
     def send_confirm_mail(self, email, confim_code):
         text = f'Ваш код активации:{confim_code}'
         send_mail(
@@ -66,9 +66,8 @@ class User(AbstractUser):
     bio = models.TextField(max_length=1200, blank=True)
     is_confirm = models.BooleanField(default=False)
     confirm_code = models.IntegerField(blank=True, null=True)
- 
 
-    #определим менеджер пользователей для данной модели
+    # Определим менеджер пользователей для данной модели
     objects = UserManagerCustom()
 
     def __str__(self):
