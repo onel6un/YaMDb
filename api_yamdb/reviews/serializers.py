@@ -23,13 +23,13 @@ class GenresSerializer(serializers.ModelSerializer):
 
 class TitlesSerializerForCreate(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
-        slug_field='name',
+        slug_field='slug',
         queryset=Genre.objects.all(),
         many=True,
         required=False
     )
     category = serializers.SlugRelatedField(
-        slug_field='name',
+        slug_field='slug',
         queryset=Category.objects.all(),
     )
 
@@ -78,15 +78,17 @@ class ReviewsSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'author', 'pub_date', 'title')
 
     def validate(self, data):
-        user = self.context.get("request").user
-        title_id = self.context['view'].kwargs['titles_id']
-        # Проверим есть ли у пользователя отзыв на данное произведение
-        # если истина, выведем исключение
-        users_reviews = Review.objects.filter(author=user)
-        if users_reviews.filter(title_id=title_id).exists():
-            raise serializers.ValidationError(
-                'Вы можите написать только один отзыв, на данное произведение'
-            )
+        if self.context.get("request").method == 'POST':
+            user = self.context.get("request").user
+            title_id = self.context['view'].kwargs['titles_id']
+            # Проверим есть ли у пользователя отзыв на данное произведение
+            # если истина, выведем исключение
+            users_reviews = Review.objects.filter(author=user)
+            if users_reviews.filter(title_id=title_id).exists():
+                raise serializers.ValidationError(
+                    'Вы можите написать только один отзыв, '
+                    'на данное произведение'
+                )
         return data
 
 

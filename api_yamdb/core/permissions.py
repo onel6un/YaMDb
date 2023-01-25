@@ -36,8 +36,15 @@ class AdminOrReadOnly(permissions.BasePermission):
 class AuthorOrModeratorOtherwiseReadOnly(permissions.BasePermission):
     '''Право на изменение\удаление экземпляра, есть у
         admin, moderator, superuser и автора экземпляра'''   
-    # Право на чтение для не аутентифицированных
-    # пользователей стоит указать отдельно во вьюсете!
+    
+    def has_permission(self, request, view):
+        '''Условия разрешения на выполнение запроса для получения
+        списка объектов или создания нового объекта'''
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        if request.user.is_authenticated:
+            return True
+        return False
 
     def has_object_permission(self, request, view, obj):
         if not request.user.is_authenticated:

@@ -50,7 +50,7 @@ class TitlesAPI(viewsets.ModelViewSet):
     # что и требует отдельных сериализаторов для чтения и записи
     def get_serializer_class(self):
         print(self.action)
-        if self.action == 'list' or self.action == 'retieve':
+        if self.action == 'list' or self.action == 'retrieve':
             return TitlesSerializerForRead
         return TitlesSerializerForCreate
 
