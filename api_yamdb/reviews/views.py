@@ -16,6 +16,7 @@ from core.permissions import *
 class CategoriesAPI(viewsets.GenericViewSet, mixins.ListModelMixin,
                     mixins.CreateModelMixin, mixins.DestroyModelMixin):
     permission_classes = (AdminOrReadOnly,)
+    lookup_field = 'slug'
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     filter_backends = (filters.SearchFilter,)
@@ -26,6 +27,7 @@ class CategoriesAPI(viewsets.GenericViewSet, mixins.ListModelMixin,
 class GenriesAPI(viewsets.GenericViewSet, mixins.ListModelMixin,
                  mixins.CreateModelMixin, mixins.DestroyModelMixin):
     permission_classes = (AdminOrReadOnly,)
+    lookup_field = 'slug'
     queryset = Genre.objects.all()
     serializer_class = GenresSerializer
     filter_backends = (filters.SearchFilter,)
