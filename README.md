@@ -7,7 +7,7 @@ git clone https://github.com/onel6un/YaMDb
 ```
 
 ```
-cd kittygram
+cd YaMDb
 ```
 
 Cоздать и активировать виртуальное окружение:
